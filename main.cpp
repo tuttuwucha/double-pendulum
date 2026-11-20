@@ -5,8 +5,8 @@
 
 int main() {
 
-	App app;
-	app.run(1920, 1080);
+	App app(1280, 720);
+	app.run();
 	return 0;
 
 

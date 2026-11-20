@@ -13,27 +13,37 @@
 class App {
     public:
 
-        static sf::Vector2f getPosByXY(sf::Vector2f center, double X, double Y){
+        unsigned int width = 1920;
+        unsigned int height = 1080;
+
+        App(){}
+
+        App(unsigned int Width, unsigned int Height){
+            width = Width;
+            height = Height;
+        }
+
+        sf::Vector2f getPosByXY(double X, double Y){
+            sf::Vector2f center(this->width / 2.f, this->height / 2.f);
             return sf::Vector2f(center.x + X * 200, center.y - Y * 200);
         }
 
-        static void draw(sf::RenderWindow& window, FirstPendulum& first, SecondPendulum& second, unsigned int width, unsigned int height){
-            sf::Vector2f center(width / 2.f, height / 2.f);
-
+        void draw(sf::RenderWindow& window, FirstPendulum& first, SecondPendulum& second){
             sf::CircleShape firstCircle(first.mass * 20);
             firstCircle.setOrigin(firstCircle.getGeometricCenter());
             firstCircle.setFillColor(sf::Color::Red);
-            sf::Vector2f firstPos = getPosByXY(center, first.getX(), first.getY());
+            sf::Vector2f firstPos = getPosByXY(first.getX(), first.getY());
             firstCircle.setPosition({firstPos.x, firstPos.y});
             
 
             sf::CircleShape secondCircle(second.mass * 20);
             secondCircle.setOrigin(secondCircle.getGeometricCenter());
             secondCircle.setFillColor(sf::Color::Blue);
-            sf::Vector2f secondPos = getPosByXY(center, second.getX(first), second.getY(first));
+            sf::Vector2f secondPos = getPosByXY(second.getX(first), second.getY(first));
             secondCircle.setPosition(secondPos);
 
             sf::VertexArray poles(sf::PrimitiveType::Lines, 4);
+            sf::Vector2f center(this->width / 2.f, this->height / 2.f);
             poles[0].position = center;
             poles[1].position = firstPos;
             poles[2].position = firstPos;
@@ -45,15 +55,15 @@ class App {
             window.draw(secondCircle);
         }
 
-        void run(unsigned int width, unsigned int height){
+        void run(){
 
-            sf::RenderWindow window(sf::VideoMode({width, height}), "Double Pendulum");
+            sf::RenderWindow window(sf::VideoMode({this->width, this->height}), "Double Pendulum");
             window.setFramerateLimit(100);
 
             FirstPendulum first(1, 3.14159);
-            SecondPendulum second(2, 0);
+            SecondPendulum second(1, 0);
 
-            std::atomic<int> calculationDelayMs{1};
+            std::atomic<double> calculationDelayMs{1.0};
 
             std::jthread thread([&](std::stop_token stoken){
                 auto nextStep = std::chrono::steady_clock::now();
@@ -88,7 +98,7 @@ class App {
                 
                 window.clear();
 
-                this->draw(window, first, second, width, height);
+                this->draw(window, first, second);
 
                 window.display();
 
