@@ -18,6 +18,6 @@ class FirstPendulum : public Pendulum{
     }
 
     double getY(){
-        return this->poleLength * std::cos(this->poleAngle);
+        return -this->poleLength * std::cos(this->poleAngle);
     }
 };

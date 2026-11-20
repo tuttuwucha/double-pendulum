@@ -6,7 +6,7 @@
 int main() {
 
 	App app;
-	app.run(80, 80);
+	app.run(1920, 1080);
 	return 0;
 
 

@@ -12,8 +12,37 @@
 
 class App {
     public:
-        static void draw(sf::RenderWindow& window){
+
+        static sf::Vector2f getPosByXY(sf::Vector2f center, double X, double Y){
+            return sf::Vector2f(center.x + X * 200, center.y - Y * 200);
+        }
+
+        static void draw(sf::RenderWindow& window, FirstPendulum& first, SecondPendulum& second, unsigned int width, unsigned int height){
+            sf::Vector2f center(width / 2.f, height / 2.f);
+
+            sf::CircleShape firstCircle(first.mass * 20);
+            firstCircle.setOrigin(firstCircle.getGeometricCenter());
+            firstCircle.setFillColor(sf::Color::Red);
+            sf::Vector2f firstPos = getPosByXY(center, first.getX(), first.getY());
+            firstCircle.setPosition({firstPos.x, firstPos.y});
             
+
+            sf::CircleShape secondCircle(second.mass * 20);
+            secondCircle.setOrigin(secondCircle.getGeometricCenter());
+            secondCircle.setFillColor(sf::Color::Blue);
+            sf::Vector2f secondPos = getPosByXY(center, second.getX(first), second.getY(first));
+            secondCircle.setPosition(secondPos);
+
+            sf::VertexArray poles(sf::PrimitiveType::Lines, 4);
+            poles[0].position = center;
+            poles[1].position = firstPos;
+            poles[2].position = firstPos;
+            poles[3].position = secondPos;
+
+
+            window.draw(poles);
+            window.draw(firstCircle);
+            window.draw(secondCircle);
         }
 
         void run(unsigned int width, unsigned int height){
@@ -21,8 +50,8 @@ class App {
             sf::RenderWindow window(sf::VideoMode({width, height}), "Double Pendulum");
             window.setFramerateLimit(100);
 
-            FirstPendulum first(1, 0.5);
-            SecondPendulum second(1, 0);
+            FirstPendulum first(1, 3.14159);
+            SecondPendulum second(2, 0);
 
             std::atomic<int> calculationDelayMs{1};
 
@@ -57,9 +86,10 @@ class App {
                     }
                 }
                 
-                std::cout << "X: " << first.getX() << " Y: " << first.getY() << '\n';
-                
                 window.clear();
+
+                this->draw(window, first, second, width, height);
+
                 window.display();
 
             }

@@ -18,6 +18,6 @@ class SecondPendulum : public Pendulum{
     }
 
     double getY(const Pendulum& first){
-        return first.poleLength * std::cos(first.poleAngle) + this->poleLength * std::cos(this->poleAngle);
+        return -first.poleLength * std::cos(first.poleAngle) - this->poleLength * std::cos(this->poleAngle);
     }
 };
